@@ -20,7 +20,6 @@ function App() {
     <FeatureCards />
     <Experience />
     <TechStack />
-    <Testimonials />
     <Contact />
     <Footer />
   </>

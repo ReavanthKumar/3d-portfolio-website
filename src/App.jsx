@@ -1,14 +1,13 @@
 import { Suspense, lazy } from 'react';
+import { Loader } from '@react-three/drei';
 import Hero from './sections/Hero.jsx';
 import NavBar from './components/NavBar.jsx';
-// Eager load TechStack for debugging
-import TechStack from './sections/TechStack.jsx';
+import TechStack from './sections/TechStack.jsx'; // Eager load for stability
 
 const ShowcaseSection = lazy(() => import('./sections/ShowcaseSection.jsx'));
 const LogoShowcase = lazy(() => import('./sections/LogoShowcase.jsx'));
 const FeatureCards = lazy(() => import('./sections/FeatureCards.jsx'));
 const Experience = lazy(() => import('./sections/Experience.jsx'));
-// const TechStack = lazy(() => import('./sections/TechStack.jsx'));
 const Testimonials = lazy(() => import('./sections/Testimonials.jsx'));
 const Contact = lazy(() => import('./sections/Contact.jsx'));
 const Footer = lazy(() => import('./sections/Footer.jsx'));
@@ -28,6 +27,7 @@ function App() {
         <Contact />
         <Footer />
       </Suspense>
+      <Loader />
     </>
 
   )

@@ -58,8 +58,6 @@ const LiquidGlass = ({ position, scale }) => {
           temporalDistortion={0.25}
           color={"#ffffff"}
           background={"#000000"}
-          resolution={512} // Performance: Low res buffer
-          samples={4} // Performance: Fewer samples
         />
       </mesh>
     </Float>

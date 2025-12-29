@@ -1,94 +1,191 @@
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Text, MeshTransmissionMaterial, Environment, Float } from "@react-three/drei";
+import { useRef, useState } from "react";
+import * as THREE from "three";
+import { techStackIcons } from "../constants";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-import TitleHeader from "../components/TitleHeader";
-import TechIconCardExperience from "../components/models/tech_logos/TechIconCardExperience";
-import { techStackIcons } from "../constants";
-// import { techStackImgs } from "../constants";
+gsap.registerPlugin(ScrollTrigger);
 
-const TechStack = () => {
-  // Animate the tech cards in the skills section
-  useGSAP(() => {
-    // This animation is triggered when the user scrolls to the #skills wrapper
-    // The animation starts when the top of the wrapper is at the center of the screen
-    // The animation is staggered, meaning each card will animate in sequence
-    // The animation ease is set to "power2.inOut", which is a slow-in fast-out ease
-    gsap.fromTo(
-      ".tech-card",
-      {
-        // Initial values
-        y: 50, // Move the cards down by 50px
-        opacity: 0, // Set the opacity to 0
-      },
-      {
-        // Final values
-        y: 0, // Move the cards back to the top
-        opacity: 1, // Set the opacity to 1
-        duration: 1, // Duration of the animation
-        ease: "power2.inOut", // Ease of the animation
-        stagger: 0.2, // Stagger the animation by 0.2 seconds
-        scrollTrigger: {
-          trigger: "#skills", // Trigger the animation when the user scrolls to the #skills wrapper
-          start: "top center", // Start the animation when the top of the wrapper is at the center of the screen
-        },
-      }
-    );
+// Duplicate the names to create a seamless seamless loop effect
+// Duplicate the names to create a seamless seamless loop effect
+const originalTechNames = [
+  "Next.js", "React", "Three.js", "GSAP", "Tailwind"
+];
+// Single list interaction
+const techNames = [...originalTechNames];
+
+const LiquidGlass = ({ position, scale }) => {
+  const meshRef = useRef();
+  const [hovered, setHovered] = useState(false);
+
+  useFrame(() => {
+    if (meshRef.current) {
+      // "Squish" effect: Flatten Z, Expand X/Y
+      const targetX = hovered ? 1.15 : 1.0;
+      const targetY = hovered ? 1.15 : 1.0;
+      const targetZ = hovered ? 0.8 : 1.0;
+
+      // Smooth interpolation - Increased speed (0.3) for snappy squish
+      meshRef.current.scale.x = THREE.MathUtils.lerp(meshRef.current.scale.x, scale[0] * targetX, 0.3);
+      meshRef.current.scale.y = THREE.MathUtils.lerp(meshRef.current.scale.y, scale[1] * targetY, 0.3);
+      meshRef.current.scale.z = THREE.MathUtils.lerp(meshRef.current.scale.z, scale[2] * targetZ, 0.3);
+    }
   });
 
   return (
-    <div id="skills" className="flex-center section-padding">
-      <div className="w-full h-full md:px-10 px-5">
-        <TitleHeader
-          title="How I Can Contribute & My Key Skills"
-          sub="🤝 What I Bring to the Table"
+    <Float speed={4} rotationIntensity={2} floatIntensity={2}>
+      <mesh
+        ref={meshRef} // Attached ref for animation
+        position={position}
+        // Scale is handled by useFrame, but initial scale is helpful
+        scale={scale}
+        onPointerOver={() => { setHovered(true); document.body.style.cursor = 'pointer'; }}
+        onPointerOut={() => { setHovered(false); document.body.style.cursor = 'auto'; }}
+      >
+        <sphereGeometry args={[1, 64, 64]} />
+        <MeshTransmissionMaterial
+          thickness={1.5}
+          roughness={0.1}
+          transmission={1}
+          ior={1.2}
+          chromaticAberration={0.05}
+          backside={true}
+          distortion={0.2}
+          distortionScale={1}
+          temporalDistortion={0.25}
+          color={"#ffffff"}
+          background={"#000000"}
+          resolution={512} // Performance: Low res buffer
+          samples={4} // Performance: Fewer samples
         />
-        <div className="tech-grid">
-          {/* Loop through the techStackIcons array and create a component for each item. 
-              The key is set to the name of the tech stack icon, and the classnames are set to 
-              card-border, tech-card, overflow-hidden, and group. The xl:rounded-full and rounded-lg 
-              classes are only applied on larger screens. */}
-          {techStackIcons.map((techStackIcon) => (
-            <div
-              key={techStackIcon.name}
-              className="card-border tech-card overflow-hidden group xl:rounded-full rounded-lg"
-            >
-              {/* The tech-card-animated-bg div is used to create a background animation when the 
-                  component is hovered. */}
-              <div className="tech-card-animated-bg" />
-              <div className="tech-card-content">
-                {/* The tech-icon-wrapper div contains the TechIconCardExperience component, 
-                    which renders the 3D model of the tech stack icon. */}
-                <div className="tech-icon-wrapper">
-                  <TechIconCardExperience model={techStackIcon} />
-                </div>
-                {/* The padding-x and w-full classes are used to add horizontal padding to the 
-                    text and make it take up the full width of the component. */}
-                <div className="padding-x w-full">
-                  {/* The p tag contains the name of the tech stack icon. */}
-                  <p>{techStackIcon.name}</p>
-                </div>
-              </div>
-            </div>
-          ))}
+      </mesh>
+    </Float>
+  );
+};
 
-          {/* This is for the img part */}
-          {/* {techStackImgs.map((techStackIcon, index) => (
-            <div
-              key={index}
-              className="card-border tech-card overflow-hidden group xl:rounded-full rounded-lg"
-            >
-              <div className="tech-card-animated-bg" />
-              <div className="tech-card-content">
-                <div className="tech-icon-wrapper">
-                  <img src={techStackIcon.imgPath} alt="" />
-                </div>
-                <div className="padding-x w-full">
-                  <p>{techStackIcon.name}</p>
-                </div>
-              </div>
-            </div>
-          ))} */}
-        </div>
+const TextList = ({ progress }) => {
+  const { viewport } = useThree();
+  const group = useRef();
+  const textRefs = useRef([]);
+  const itemHeight = 1.6;
+  const fullHeight = techNames.length * itemHeight;
+
+  useFrame(() => {
+    // Use the mutable ref driven by GSAP
+    const offset = progress.current;
+
+    if (group.current) {
+      // Center the scroll
+      group.current.position.y = (fullHeight * offset) - (fullHeight / 2);
+    }
+
+    // Update opacity/scale focus
+    textRefs.current.forEach((text, i) => {
+      if (!text) return;
+
+      const itemLocalY = i * itemHeight - (fullHeight / 2);
+      const itemWorldY = group.current.position.y + itemLocalY;
+
+      const dist = Math.abs(itemWorldY);
+      const fadeRange = itemHeight * 0.7;
+
+      let opacity = 1 - (dist / fadeRange);
+      opacity = THREE.MathUtils.clamp(opacity, 0, 1);
+      opacity = Math.pow(opacity, 2);
+
+      text.material.opacity = opacity;
+      text.visible = opacity > 0;
+
+      const scale = 1 + opacity * 0.2;
+      text.scale.set(scale, scale, scale);
+    });
+  });
+
+  return (
+    <group ref={group} position={[0, 0, -2]}>
+      {techNames.map((name, i) => (
+        <Text
+          key={i}
+          ref={(el) => (textRefs.current[i] = el)}
+          position={[0, i * itemHeight - (fullHeight / 2), 0]}
+          fontSize={viewport.width > 10 ? 1.5 : viewport.width / 8}
+          color="white"
+          anchorX="center"
+          anchorY="middle"
+          // Removed custom font URL due to crash
+          fontWeight="900"
+          letterSpacing={0.05}
+          transparent
+        >
+          {name}
+        </Text>
+      ))}
+    </group>
+  );
+}
+
+const TechStackScene = ({ progress }) => {
+  const { viewport } = useThree();
+  const xOffset = viewport.width / 3;
+  const yOffset = viewport.height / 3;
+  const scaleSize = viewport.width / 9;
+
+  return (
+    <>
+      <TextList progress={progress} />
+
+      {/* Lower Left Sphere */}
+      <LiquidGlass
+        position={[-xOffset, -yOffset, 0]}
+        scale={[scaleSize, scaleSize, scaleSize]}
+      />
+
+      {/* Upper Right Sphere */}
+      <LiquidGlass
+        position={[xOffset, yOffset, 0]}
+        scale={[scaleSize, scaleSize, scaleSize]}
+      />
+    </>
+  );
+}
+
+const TechStack = () => {
+  const container = useRef();
+  // Mutable ref to share state between GSAP (DOM) and R3F (Canvas) safely
+  const progress = useRef(0);
+
+  useGSAP(() => {
+    ScrollTrigger.create({
+      trigger: container.current,
+      start: "top top",
+      end: "+=2000", // Adapted for shorter list
+      pin: true,
+      scrub: 0, // Instant scrub for snappy feel
+      onUpdate: (self) => {
+        progress.current = self.progress;
+      }
+    });
+  }, { scope: container });
+
+  return (
+    <div ref={container} id="skills-container" style={{ height: '100vh', width: '100%', position: 'relative' }}>
+      <Canvas camera={{ position: [0, 0, 8], fov: 45 }} dpr={[1, 1.5]}>
+        <color attach="background" args={['#050505']} />
+
+        <ambientLight intensity={1.0} />
+        <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} />
+        <pointLight position={[-10, -10, -10]} intensity={0.5} />
+
+        <Environment preset="studio" />
+
+        <TechStackScene progress={progress} />
+      </Canvas>
+
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-white/50 text-sm pointer-events-none font-sans">
+        Scroll to spin the reel
       </div>
     </div>
   );

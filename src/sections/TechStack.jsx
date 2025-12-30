@@ -3,7 +3,6 @@ import { Text, MeshTransmissionMaterial, Environment, Float } from "@react-three
 import { useMediaQuery } from "react-responsive";
 import { useRef, useState } from "react";
 import * as THREE from "three";
-import { techStackIcons } from "../constants";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";

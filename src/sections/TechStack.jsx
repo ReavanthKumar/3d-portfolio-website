@@ -1,5 +1,6 @@
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Text, MeshTransmissionMaterial, Environment, Float } from "@react-three/drei";
+import { useMediaQuery } from "react-responsive";
 import { useRef, useState } from "react";
 import * as THREE from "three";
 import { techStackIcons } from "../constants";
@@ -20,6 +21,8 @@ const techNames = [...originalTechNames];
 const LiquidGlass = ({ position, scale }) => {
   const meshRef = useRef();
   const [hovered, setHovered] = useState(false);
+
+  const isMobile = useMediaQuery({ query: '(max-width: 768px)' });
 
   useFrame(() => {
     if (meshRef.current) {
@@ -46,19 +49,28 @@ const LiquidGlass = ({ position, scale }) => {
         onPointerOut={() => { setHovered(false); document.body.style.cursor = 'auto'; }}
       >
         <sphereGeometry args={[1, 64, 64]} />
-        <MeshTransmissionMaterial
-          thickness={1.5}
-          roughness={0.1}
-          transmission={1}
-          ior={1.2}
-          chromaticAberration={0.05}
-          backside={true}
-          distortion={0.2}
-          distortionScale={1}
-          temporalDistortion={0.25}
-          color={"#ffffff"}
-          background={"#000000"}
-        />
+        {isMobile ? (
+          <meshPhysicalMaterial
+            transparent
+            roughness={0}
+            opacity={0.5}
+            color="#ffffff"
+          />
+        ) : (
+          <MeshTransmissionMaterial
+            thickness={1.5}
+            roughness={0.1}
+            transmission={1}
+            ior={1.2}
+            chromaticAberration={0.05}
+            backside={true}
+            distortion={0.2}
+            distortionScale={1}
+            temporalDistortion={0.25}
+            color={"#ffffff"}
+            background={"#000000"}
+          />
+        )}
       </mesh>
     </Float>
   );
@@ -170,6 +182,11 @@ const TechStack = () => {
 
   return (
     <div ref={container} id="skills-container" style={{ height: '100vh', width: '100%', position: 'relative' }}>
+      <div className="absolute top-32 left-0 w-full flex justify-center pointer-events-none z-10">
+        <h2 className="text-white text-3xl md:text-5xl font-bold font-sans uppercase tracking-wider">
+          Expertise In
+        </h2>
+      </div>
       <Canvas camera={{ position: [0, 0, 8], fov: 45 }} dpr={[1, 1.5]}>
         <color attach="background" args={['#050505']} />
 

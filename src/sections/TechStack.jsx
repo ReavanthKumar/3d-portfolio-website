@@ -12,7 +12,7 @@ gsap.registerPlugin(ScrollTrigger);
 // Duplicate the names to create a seamless seamless loop effect
 // Duplicate the names to create a seamless seamless loop effect
 const originalTechNames = [
-  "Next.js", "React", "Three.js", "GSAP", "Tailwind"
+  "Web Development", "Machine Learning", "Data Science", "Artificial Intelligence", "Cloud Computing"
 ];
 // Single list interaction
 const techNames = [...originalTechNames];

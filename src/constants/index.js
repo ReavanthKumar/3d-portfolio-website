@@ -129,7 +129,7 @@ const techStackIcons = [
 const expCards = [
   {
     review:
-      "Reavanth brought creativity and technical expertise to the team, significantly improving our frontend performance. His work has been invaluable in delivering faster experiences.",
+      "Reavanth Developed and maintained full-stack applications using the NextJS and NodeJS. He focused on implementing robust APIs, optimizing database queries, and contributing to both front-end UI/UX improvements and back-end logic.",
     imgPath: "/images/exp11.png",
     logoPath: "/images/logo11.png",
     title: "Full Stack Developer Intern",
@@ -142,7 +142,7 @@ const expCards = [
   },
   {
     review:
-      "Reavanth contributions to Docker's web applications have been outstanding. He approaches challenges with a problem-solving mindset.",
+      "Reavanth focused on designing, implementing, and optimizing RESTful APIs to facilitate secure and efficient data exchange between the application and the database.",
     imgPath: "/images/exp12.png",
     logoPath: "/images/logo12.png",
     title: "Back End Developer",

@@ -68,6 +68,8 @@ const LiquidGlass = ({ position, scale }) => {
             temporalDistortion={0.25}
             color={"#ffffff"}
             background={"#000000"}
+            resolution={512} // Lower resolution for better performance
+            samples={6} // Fewer samples for faster rendering
           />
         )}
       </mesh>
@@ -186,7 +188,7 @@ const TechStack = () => {
           Expertise In
         </h2>
       </div>
-      <Canvas camera={{ position: [0, 0, 8], fov: 45 }} dpr={[1, 1.5]}>
+      <Canvas camera={{ position: [0, 0, 8], fov: 45 }} dpr={[1, 1]}>
         <color attach="background" args={['#050505']} />
 
         <ambientLight intensity={1.0} />

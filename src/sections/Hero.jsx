@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 
@@ -7,11 +8,23 @@ import { words } from "../constants";
 import HeroExperience from "../components/models/HeroModels/HeroExperience";
 
 const Hero = () => {
+  const [show3D, setShow3D] = useState(false);
+
   useGSAP(() => {
     gsap.fromTo(
       ".hero-text h1",
       { y: 50, opacity: 0 },
-      { y: 0, opacity: 1, stagger: 0.2, duration: 1, ease: "power2.inOut" }
+      {
+        y: 0,
+        opacity: 1,
+        stagger: 0.2,
+        duration: 1,
+        ease: "power2.inOut",
+        onComplete: () => {
+          // Only show 3D after text animation is done to prevent lag
+          setShow3D(true);
+        },
+      }
     );
   });
 
@@ -25,7 +38,7 @@ const Hero = () => {
         {/* LEFT: Hero Content */}
         <header className="flex flex-col justify-center md:w-full w-screen md:px-20 px-5">
           <div className="flex flex-col gap-7">
-            <div className="hero-text">
+            <div className="hero-text" style={{ willChange: 'transform, opacity' }}>
               <h1>
                 Shaping
                 <span className="slide">
@@ -64,8 +77,8 @@ const Hero = () => {
 
         {/* RIGHT: 3D Model or Visual */}
         <figure>
-          <div className="hero-3d-layout">
-            <HeroExperience />
+          <div className={`hero-3d-layout transition-opacity duration-1000 ${show3D ? 'opacity-100' : 'opacity-0'}`}>
+            {show3D && <HeroExperience />}
           </div>
         </figure>
       </div>

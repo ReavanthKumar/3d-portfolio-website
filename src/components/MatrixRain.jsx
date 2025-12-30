@@ -1,16 +1,43 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const MatrixRain = () => {
   const canvasRef = useRef(null);
+  const containerRef = useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  // Intersection Observer to pause animation when off-screen
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting);
+      },
+      { threshold: 0.1 } // Start when 10% visible
+    );
+
+    const currentContainer = containerRef.current;
+    if (currentContainer) {
+      observer.observe(currentContainer);
+    }
+
+    return () => {
+      if (currentContainer) {
+        observer.unobserve(currentContainer);
+      }
+    };
+  }, []);
 
   useEffect(() => {
+    if (!isVisible) return; // Pause if not visible
+
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
 
     // Set canvas size to match parent container
     const resizeCanvas = () => {
-      canvas.width = canvas.parentElement.clientWidth;
-      canvas.height = canvas.parentElement.clientHeight;
+      if (canvas.parentElement) {
+        canvas.width = canvas.parentElement.clientWidth;
+        canvas.height = canvas.parentElement.clientHeight;
+      }
     };
 
     resizeCanvas();
@@ -18,7 +45,7 @@ const MatrixRain = () => {
 
     const fontSize = 16;
     const columns = Math.floor(canvas.width / fontSize);
-    const drops = Array(columns).fill(1).map(() => Math.random() * -100); // Start at random random heights above screen
+    const drops = Array(columns).fill(1).map(() => Math.random() * -100);
 
     const draw = () => {
       // Semi-transparent black background for trail effect
@@ -29,16 +56,12 @@ const MatrixRain = () => {
       ctx.font = `${fontSize}px monospace`;
 
       for (let i = 0; i < drops.length; i++) {
-        // Random 0 or 1
         const text = Math.random() > 0.5 ? "1" : "0";
-
         ctx.fillText(text, i * fontSize, drops[i] * fontSize);
 
-        // Reset drop to top randomly after it clears screen
         if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
           drops[i] = 0;
         }
-
         drops[i]++;
       }
     };
@@ -49,14 +72,16 @@ const MatrixRain = () => {
       clearInterval(intervalId);
       window.removeEventListener("resize", resizeCanvas);
     };
-  }, []);
+  }, [isVisible]); // Re-run effect when visibility changes
 
   return (
-    <canvas
-      ref={canvasRef}
-      className="w-full h-full rounded-3xl"
-      style={{ display: "block", background: "#000" }}
-    />
+    <div ref={containerRef} className="w-full h-full">
+      <canvas
+        ref={canvasRef}
+        className="w-full h-full rounded-3xl"
+        style={{ display: "block", background: "#000" }}
+      />
+    </div>
   );
 };
 

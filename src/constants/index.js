@@ -129,7 +129,7 @@ const techStackIcons = [
 const expCards = [
   {
     review:
-      "Reavanth Developed and maintained full-stack applications using the NextJS and NodeJS. He focused on implementing robust APIs, optimizing database queries, and contributing to both front-end UI/UX improvements and back-end logic.",
+      "Reavanth developed and maintained full-stack applications using the NextJS and NodeJS. He focused on implementing robust APIs, optimizing database queries, and contributing to both front-end UI/UX improvements and back-end logic.",
     imgPath: "/images/exp11.png",
     logoPath: "/images/logo11.png",
     title: "Full Stack Developer Intern",
